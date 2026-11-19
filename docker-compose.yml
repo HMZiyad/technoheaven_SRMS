@@ -73,6 +73,20 @@ services:
     profiles:
       - migrate
 
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:4000
+      - VITE_WS_URL=http://localhost:4000
+    volumes:
+      - ./frontend/src:/app/src
+      - /app/node_modules
+    restart: unless-stopped
+
 volumes:
   db_data:
   redis_data:
