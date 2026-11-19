@@ -1,9 +1,11 @@
 # ── base ──────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS base
+RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
 COPY package*.json ./
 COPY prisma/ ./prisma/
-RUN npm ci
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+RUN npx prisma generate
 
 # ── dev ───────────────────────────────────────────────────────────────────────
 FROM base AS dev
@@ -22,7 +24,7 @@ RUN npx tsc
 FROM node:20-alpine AS prod
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
 COPY --from=build /app/dist ./dist
 COPY --from=base /app/node_modules/.prisma ./node_modules/.prisma
 USER node

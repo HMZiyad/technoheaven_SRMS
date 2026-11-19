@@ -64,7 +64,7 @@ services:
     build:
       context: ./backend
       target: dev
-    command: npx prisma migrate deploy
+    command: npx prisma db push
     depends_on:
       db:
         condition: service_healthy
