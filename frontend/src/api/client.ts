@@ -17,6 +17,7 @@ export class ApiClientError extends Error {
 export interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined | null>;
   token?: string | null;
+  idempotencyKey?: string | null;
 }
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/+$/, '');
@@ -27,11 +28,21 @@ function getStoredToken(): string | null {
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { params, token, headers: customHeaders, body, ...fetchOptions } = options;
+  const { params, token, idempotencyKey, headers: customHeaders, body, ...fetchOptions } = options;
 
-  let url = endpoint.startsWith('http://') || endpoint.startsWith('https://')
-    ? endpoint
-    : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+  let normalizedEndpoint = endpoint;
+  if (!normalizedEndpoint.startsWith('http://') && !normalizedEndpoint.startsWith('https://')) {
+    if (!normalizedEndpoint.startsWith('/')) {
+      normalizedEndpoint = `/${normalizedEndpoint}`;
+    }
+    if (!normalizedEndpoint.startsWith('/api/')) {
+      normalizedEndpoint = `/api/v1${normalizedEndpoint}`;
+    }
+  }
+
+  let url = normalizedEndpoint.startsWith('http://') || normalizedEndpoint.startsWith('https://')
+    ? normalizedEndpoint
+    : `${API_BASE_URL}${normalizedEndpoint}`;
 
   if (params) {
     const searchParams = new URLSearchParams();
@@ -47,6 +58,10 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   }
 
   const headers = new Headers(customHeaders);
+
+  if (idempotencyKey && !headers.has('Idempotency-Key')) {
+    headers.set('Idempotency-Key', idempotencyKey);
+  }
 
   const activeToken = token ?? getStoredToken();
   if (activeToken && !headers.has('Authorization')) {
