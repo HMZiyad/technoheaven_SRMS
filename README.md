@@ -1,6 +1,6 @@
 # Real-Time Service Request Management System (SRMS)
 
-[![CI](https://github.com/HMZiyad/technoheaven_SRMS/actions/workflows/ci.yml/badge.svg)](https://github.com/HMZiyad/technoheaven_SRMS/actions/workflows/ci.yml)
+[![CI](https://github.com/HMZiyad/technoheaven_SRMS/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/HMZiyad/technoheaven_SRMS/actions/workflows/ci.yml)
 
 A production-grade, full-stack **Real-Time Service Request Management System** designed for high concurrency, non-blocking asynchronous processing, live WebSocket updates, role-based access control, and complete audit logging.
 
