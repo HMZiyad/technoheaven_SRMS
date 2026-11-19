@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OPERATOR
+  SUPERVISOR
+  ADMIN
+}
+
+enum Status {
+  SUBMITTED
+  QUEUED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Category {
+  TECHNICAL
+  BILLING
+  GENERAL
+  MAINTENANCE
+  EMERGENCY
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Char(36)
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         Role     @default(OPERATOR)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  createdRequests  ServiceRequest[] @relation("CreatedBy")
+  assignedRequests ServiceRequest[] @relation("AssignedTo")
+  comments         Comment[]
+  statusChanges    StatusHistory[]  @relation("ChangedBy")
+
+  @@map("users")
+}
+
+model ServiceRequest {
+  id              String    @id @default(uuid()) @db.Char(36)
+  reference       String    @unique @db.VarChar(20)
+  title           String    @db.VarChar(200)
+  description     String    @db.Text
+  category        Category
+  priority        Priority  @default(MEDIUM)
+  status          Status    @default(SUBMITTED)
+  progress        Int       @default(0) @db.TinyInt
+  currentStage    String?   @map("current_stage") @db.VarChar(50)
+  customerName    String    @map("customer_name") @db.VarChar(100)
+  customerContact String    @map("customer_contact") @db.VarChar(100)
+  createdById     String    @map("created_by") @db.Char(36)
+  assignedToId    String?   @map("assigned_to") @db.Char(36)
+  idempotencyKey  String?   @map("idempotency_key") @db.VarChar(100)
+  version         Int       @default(1)
+  attempts        Int       @default(0) @db.TinyInt
+  failureReason   String?   @map("failure_reason") @db.VarChar(500)
+  cancelRequested Boolean   @default(false) @map("cancel_requested")
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  createdBy   User   @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo  User?  @relation("AssignedTo", fields: [assignedToId], references: [id])
+
+  history      StatusHistory[]
+  comments     Comment[]
+  domainEvents DomainEvent[]
+
+  @@index([status, priority, createdAt])
+  @@index([createdById, createdAt])
+  @@index([assignedToId, status])
+  @@map("service_requests")
+}
+
+model StatusHistory {
+  id          BigInt   @id @default(autoincrement())
+  requestId   String   @map("request_id") @db.Char(36)
+  fromStatus  Status?  @map("from_status")
+  toStatus    Status   @map("to_status")
+  changedById String?  @map("changed_by") @db.Char(36)
+  note        String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  request   ServiceRequest @relation(fields: [requestId], references: [id])
+  changedBy User?          @relation("ChangedBy", fields: [changedById], references: [id])
+
+  @@index([requestId, createdAt])
+  @@map("status_history")
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @db.Char(36)
+  requestId String   @map("request_id") @db.Char(36)
+  authorId  String   @map("author_id") @db.Char(36)
+  body      String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request ServiceRequest @relation(fields: [requestId], references: [id])
+  author  User           @relation(fields: [authorId], references: [id])
+
+  @@index([requestId, createdAt])
+  @@map("comments")
+}
+
+model DomainEvent {
+  id        BigInt   @id @default(autoincrement())
+  type      String   @db.VarChar(100)
+  requestId String?  @map("request_id") @db.Char(36)
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request ServiceRequest? @relation(fields: [requestId], references: [id])
+
+  @@index([requestId, createdAt])
+  @@index([createdAt])
+  @@map("domain_events")
+}
+
+model RequestCounter {
+  id    Int @id @default(autoincrement())
+  value Int @default(0)
+
+  @@map("request_counter")
+}

@@ -1,0 +1,78 @@
+services:
+  db:
+    image: mariadb:11
+    env_file: .env
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+      target: dev
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/src:/app/src
+      - /app/node_modules
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./backend
+      target: dev
+    command: npx tsx watch src/worker.ts
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: ./backend
+      target: dev
+    command: npx prisma migrate deploy
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    restart: "no"
+    profiles:
+      - migrate
+
+volumes:
+  db_data:
+  redis_data:
