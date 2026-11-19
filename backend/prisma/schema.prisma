@@ -89,6 +89,7 @@ model ServiceRequest {
   @@index([status, priority, createdAt])
   @@index([createdById, createdAt])
   @@index([assignedToId, status])
+  @@unique([createdById, idempotencyKey])
   @@map("service_requests")
 }
 

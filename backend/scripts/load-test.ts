@@ -5,7 +5,7 @@ import { getPrismaClient, disconnectPrisma } from '../src/db/prisma';
 import { disconnectRedis } from '../src/db/redis';
 
 const API_PORT = process.env.PORT || 4000;
-const API_BASE_URL = `http://localhost:${API_PORT}/api`;
+const API_BASE_URL = `http://localhost:${API_PORT}/api/v1`;
 
 const OPERATOR_CREDENTIALS = {
   email: 'operator1@srms.local',
@@ -146,15 +146,8 @@ async function main() {
       responseTimes.push(durationMs);
       createdRequestIds.push(id);
 
-      // Transition to QUEUED in DB and enqueue in BullMQ
-      await prisma.serviceRequest.update({
-        where: { id },
-        data: { status: Status.QUEUED },
-      });
-      await queueProducer.enqueue(id, priority);
-
       console.log(
-        `[${i + 1}/30] Created & Enqueued request ${id} (${priority}) in ${durationMs.toFixed(1)}ms`,
+        `[${i + 1}/30] Created request ${id} (${priority}) in ${durationMs.toFixed(1)}ms`,
       );
     }
 

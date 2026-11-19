@@ -6,7 +6,7 @@ import { assertTransition, canCancel } from '../domain/stateMachine';
 import { historyRepository } from '../repositories/history.repository';
 import { requestRepository, ServiceRequestWithUsers } from '../repositories/request.repository';
 import { AuthUser, PaginationMeta, Role, Status } from '../types';
-import { AuthorizationError, ConflictError, NotFoundError } from '../utils/errors';
+import { AuthorizationError, ConflictError, NotFoundError, RateLimitError } from '../utils/errors';
 import { CreateRequestInput, ListRequestsQuery, UpdateRequestInput } from '../validators/request.validator';
 import { queueProducer } from '../queue/producer';
 import { eventPublisher } from '../realtime/eventPublisher';
@@ -18,6 +18,15 @@ export async function createRequest(
   data: CreateRequestInput,
   idempotencyKey?: string,
 ): Promise<ServiceRequest> {
+  if (user.role === Role.OPERATOR) {
+    const openCount = await requestRepository.countOpenByUser(user.id);
+    if (openCount >= 50) {
+      throw new RateLimitError(
+        'Open service requests limit reached (maximum 50). Please wait for ongoing requests to complete.',
+      );
+    }
+  }
+
   if (idempotencyKey) {
     const existing = await requestRepository.findByIdempotencyKey(user.id, idempotencyKey);
     if (existing) {
