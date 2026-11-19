@@ -34,7 +34,8 @@ export async function findById(id: string): Promise<User | null> {
 
 export async function updateUser(id: string, data: Partial<User>): Promise<User> {
   const prisma = getPrismaClient();
-  const { id: _ignoredId, ...updateData } = data;
+  const updateData = { ...data };
+  delete updateData.id;
   return prisma.user.update({
     where: { id },
     data: updateData as Prisma.UserUpdateInput,

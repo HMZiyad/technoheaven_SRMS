@@ -9,7 +9,7 @@ async function main() {
 
   const defaultPassword = await argon2.hash('Password123!');
 
-  const admin = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: 'admin@srms.local' },
     update: {},
     create: {
