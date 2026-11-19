@@ -67,7 +67,7 @@ describe('Domain: State Machine', () => {
         expect(err).toBeInstanceOf(InvalidTransitionError);
         expect(err.from).toBe(Status.SUBMITTED);
         expect(err.to).toBe(Status.COMPLETED);
-        expect(err.statusCode).toBe(400);
+        expect(err.statusCode).toBe(409);
         expect(err.code).toBe('INVALID_TRANSITION');
       }
     });

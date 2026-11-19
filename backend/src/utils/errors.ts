@@ -19,7 +19,7 @@ export class ValidationError extends AppError {
 
 export class AuthenticationError extends AppError {
   constructor(message = 'Authentication required') {
-    super(401, 'UNAUTHENTICATED', message);
+    super(401, 'AUTHENTICATION_ERROR', message);
   }
 }
 
@@ -47,8 +47,11 @@ export class RateLimitError extends AppError {
   }
 }
 
-export class InvalidTransitionError extends ConflictError {
-  constructor(from: string, to: string) {
-    super(`Invalid status transition from ${from} to ${to}`);
+export class InvalidTransitionError extends AppError {
+  constructor(
+    public readonly from: string,
+    public readonly to: string,
+  ) {
+    super(409, 'INVALID_TRANSITION', `Invalid status transition from ${from} to ${to}`);
   }
 }

@@ -44,6 +44,8 @@ services:
       - "4000:4000"
     volumes:
       - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
+      - ./backend/scripts:/app/scripts
       - /app/node_modules
     restart: unless-stopped
 

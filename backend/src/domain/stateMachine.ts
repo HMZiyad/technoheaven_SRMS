@@ -24,5 +24,5 @@ export function isTerminal(status: Status): boolean {
 }
 
 export function canCancel(status: Status): boolean {
-  return [Status.SUBMITTED, Status.QUEUED, Status.IN_PROGRESS].includes(status);
+  return ([Status.SUBMITTED, Status.QUEUED, Status.IN_PROGRESS] as Status[]).includes(status);
 }
