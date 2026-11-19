@@ -33,6 +33,8 @@ export enum Category {
 export interface JwtPayload {
   sub: string;
   role: Role;
+  email?: string;
+  name?: string;
   jti: string;
   iat?: number;
   exp?: number;

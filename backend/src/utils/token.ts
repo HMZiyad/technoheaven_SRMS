@@ -54,6 +54,8 @@ export async function verifyAccessToken(token: string): Promise<JwtPayload> {
   return {
     sub: payload.sub as string,
     role: payload.role as Role,
+    email: payload.email as string | undefined,
+    name: payload.name as string | undefined,
     jti: payload.jti as string,
     iat: payload.iat,
     exp: payload.exp,
