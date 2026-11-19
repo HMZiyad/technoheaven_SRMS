@@ -3,6 +3,7 @@ import { commentRepository, CommentWithAuthor } from '../repositories/comment.re
 import { requestRepository } from '../repositories/request.repository';
 import { AuthUser } from '../types';
 import { NotFoundError } from '../utils/errors';
+import { eventPublisher } from '../realtime/eventPublisher';
 
 export async function addComment(
   user: AuthUser,
@@ -14,11 +15,19 @@ export async function addComment(
     throw new NotFoundError('ServiceRequest');
   }
 
-  return commentRepository.create({
+  const comment = await commentRepository.create({
     requestId,
     authorId: user.id,
     body,
   });
+
+  await eventPublisher.publishCommentAdded({
+    requestId,
+    comment,
+    createdById: request.createdById,
+  });
+
+  return comment;
 }
 
 export async function getComments(

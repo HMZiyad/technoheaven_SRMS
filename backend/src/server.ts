@@ -5,10 +5,14 @@ import { config } from './config';
 import { logger } from './utils/logger';
 import { disconnectPrisma } from './db/prisma';
 import { disconnectRedis } from './db/redis';
+import { initSocketGateway, closeSocketGateway } from './realtime/socketGateway';
 
 async function main() {
   const app = createApp();
   const server = http.createServer(app);
+
+  await initSocketGateway(server);
+  logger.info('WebSocket Socket.IO gateway initialized');
 
   server.listen(config.PORT, () => {
     logger.info({ port: config.PORT, env: config.NODE_ENV }, 'API server started');
@@ -16,6 +20,7 @@ async function main() {
 
   async function shutdown(signal: string) {
     logger.info({ signal }, 'Shutting down...');
+    await closeSocketGateway();
     server.close(async () => {
       await disconnectPrisma();
       await disconnectRedis();

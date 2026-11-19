@@ -12,6 +12,7 @@ import { authRouter } from './controllers/auth.controller';
 import { requestRouter } from './controllers/request.controller';
 import { commentRouter } from './controllers/comment.controller';
 import { statsRouter } from './controllers/stats.controller';
+import { eventRouter } from './controllers/event.controller';
 
 export function createApp() {
   const app = express();
@@ -45,6 +46,7 @@ export function createApp() {
   app.use('/api/v1/requests', requestRouter);
   app.use('/api/v1/requests', commentRouter);
   app.use('/api/v1/stats', statsRouter);
+  app.use('/api/v1/events', eventRouter);
 
   app.use(notFound);
   app.use(errorHandler);

@@ -8,6 +8,8 @@ import { requestRepository, ServiceRequestWithUsers } from '../repositories/requ
 import { AuthUser, PaginationMeta, Role, Status } from '../types';
 import { AuthorizationError, ConflictError, NotFoundError } from '../utils/errors';
 import { CreateRequestInput, ListRequestsQuery, UpdateRequestInput } from '../validators/request.validator';
+import { queueProducer } from '../queue/producer';
+import { eventPublisher } from '../realtime/eventPublisher';
 
 export type ServiceRequestWithDetails = ServiceRequestWithUsers;
 
@@ -56,7 +58,34 @@ export async function createRequest(
     return req;
   });
 
-  return createdRequest;
+  // Enqueue job to BullMQ
+  await queueProducer.enqueue(createdRequest.id, createdRequest.priority);
+
+  // Transition SUBMITTED -> QUEUED
+  const queuedRequest = await prisma.$transaction(async (tx) => {
+    const qReq = await requestRepository.updateWithVersion(
+      createdRequest.id,
+      createdRequest.version,
+      { status: Status.QUEUED },
+      tx,
+    );
+    await historyRepository.create(
+      {
+        requestId: createdRequest.id,
+        fromStatus: Status.SUBMITTED,
+        toStatus: Status.QUEUED,
+        changedById: user.id,
+        note: 'Enqueued for processing',
+      },
+      tx,
+    );
+    return qReq!;
+  });
+
+  // Publish event
+  await eventPublisher.publishRequestCreated(queuedRequest);
+
+  return queuedRequest;
 }
 
 export async function listRequests(
@@ -139,6 +168,8 @@ export async function updateRequest(
     throw new ConflictError('Version conflict: request was modified by another user. Please reload.');
   }
 
+  await eventPublisher.publishRequestUpdated(updated);
+
   return updated;
 }
 
@@ -163,7 +194,11 @@ export async function cancelRequest(
     assertTransition(request.status, Status.CANCELLED);
     const prisma = getPrismaClient();
 
-    return await prisma.$transaction(async (tx) => {
+    if (request.status === Status.QUEUED) {
+      await queueProducer.removeJob(id);
+    }
+
+    const cancelResult = await prisma.$transaction(async (tx) => {
       const updated = await requestRepository.updateWithVersion(
         id,
         request.version,
@@ -191,6 +226,16 @@ export async function cancelRequest(
 
       return { message: 'Request cancelled', status: Status.CANCELLED };
     });
+
+    await eventPublisher.publishStatusChanged({
+      id,
+      from: request.status,
+      to: Status.CANCELLED,
+      changedById: user.id,
+      createdById: request.createdById,
+    });
+
+    return cancelResult;
   }
 
   if (request.status === Status.IN_PROGRESS) {
@@ -205,6 +250,8 @@ export async function cancelRequest(
     if (!updated) {
       throw new ConflictError('Version conflict: request was modified by another user. Please reload.');
     }
+
+    await eventPublisher.publishRequestUpdated(updated);
 
     return {
       message: 'Cancellation requested for in-progress request',
@@ -262,6 +309,16 @@ export async function retryRequest(
     );
 
     return res;
+  });
+
+  await queueProducer.enqueue(id, updated.priority);
+
+  await eventPublisher.publishStatusChanged({
+    id,
+    from: request.status,
+    to: Status.QUEUED,
+    changedById: user.id,
+    createdById: request.createdById,
   });
 
   return updated;
