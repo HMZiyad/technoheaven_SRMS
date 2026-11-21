@@ -253,8 +253,8 @@ export async function getStats(): Promise<{
   const byCategory: Record<string, number> = {
     [Category.TECHNICAL]: 0,
     [Category.BILLING]: 0,
-    [Category.ACCOUNT]: 0,
     [Category.GENERAL]: 0,
+    [Category.MAINTENANCE]: 0,
     [Category.EMERGENCY]: 0,
   };
 
