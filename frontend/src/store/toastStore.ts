@@ -25,7 +25,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
 
   addToast: (toast) => {
     const id = Math.random().toString(36).substring(2, 9);
-    const duration = toast.duration ?? 4500;
+    const duration = toast.duration ?? 3000;
     const newToast: ToastItem = { ...toast, id, duration };
 
     set((state) => ({

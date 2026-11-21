@@ -13,7 +13,7 @@ export const Toast: React.FC = () => {
       aria-live="assertive"
       className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"
     >
-      {toasts.map((toast) => (
+      {toasts.slice(-2).map((toast) => (
         <ToastCard key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
       ))}
     </div>

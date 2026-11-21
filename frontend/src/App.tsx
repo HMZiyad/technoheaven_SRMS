@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './store/authStore';
 import { useRequestStore } from './store/requestStore';
-import { toast } from './store/toastStore';
+import { useNotificationStore } from './store/notificationStore';
 import { useSocket } from './hooks/useSocket';
 import { Role, Status, EventEnvelope } from './types';
 import { Layout } from './components/layout/Layout';
@@ -25,10 +25,11 @@ const queryClient = new QueryClient({
 
 /**
  * LiveSocketBridge wires all real-time events to the Zustand requestStore
- * and surfaces notification toasts across the application.
+ * and delivers clean updates to the notification bell store.
  */
 const LiveSocketBridge: React.FC = () => {
   const { upsertRequest, patchRequest, setStats, setLastEventId } = useRequestStore();
+  const { addNotification } = useNotificationStore();
 
   useSocket({
     onEvent: (event: EventEnvelope) => {
@@ -40,10 +41,13 @@ const LiveSocketBridge: React.FC = () => {
       const req = event.payload;
       if (req && req.id) {
         upsertRequest(req);
-        toast.info(
-          `Request ${req.reference || ''} (${req.title}) has been created.`,
-          'Request Created'
-        );
+        addNotification({
+          type: 'info',
+          title: 'Request Created',
+          message: `${req.reference ? `${req.reference}: ` : ''}${req.title || 'New service request'}`,
+          requestId: req.id,
+          reference: req.reference,
+        });
       }
     },
     onRequestStatusChanged: (event: EventEnvelope) => {
@@ -51,14 +55,41 @@ const LiveSocketBridge: React.FC = () => {
       if (id && to) {
         patchRequest(id, { status: to });
 
+        const existing = useRequestStore.getState().requests[id];
+        const refLabel = existing?.reference || `Request #${id.slice(-6)}`;
+
         if (to === Status.COMPLETED) {
-          toast.success(`Request completed successfully.`, 'Status: Completed');
+          addNotification({
+            type: 'success',
+            title: 'Status: Completed',
+            message: `${refLabel} completed successfully.`,
+            requestId: id,
+            reference: existing?.reference,
+          });
         } else if (to === Status.FAILED) {
-          toast.error(`Request processing encountered a failure.`, 'Status: Failed');
+          addNotification({
+            type: 'error',
+            title: 'Status: Failed',
+            message: `${refLabel} processing encountered a failure.`,
+            requestId: id,
+            reference: existing?.reference,
+          });
         } else if (to === Status.CANCELLED) {
-          toast.warning(`Request processing was cancelled.`, 'Status: Cancelled');
+          addNotification({
+            type: 'warning',
+            title: 'Status: Cancelled',
+            message: `${refLabel} processing was cancelled.`,
+            requestId: id,
+            reference: existing?.reference,
+          });
         } else {
-          toast.info(`Request moved to ${to.replace(/_/g, ' ')}.`, 'Status Updated');
+          addNotification({
+            type: 'info',
+            title: 'Status Updated',
+            message: `${refLabel} moved to ${to.replace(/_/g, ' ')}.`,
+            requestId: id,
+            reference: existing?.reference,
+          });
         }
       }
     },
@@ -77,10 +108,14 @@ const LiveSocketBridge: React.FC = () => {
     onRequestCommentAdded: (event: EventEnvelope) => {
       const { comment } = event.payload || {};
       if (comment) {
-        toast.info(
-          `${comment.author?.name || 'Staff'} commented: "${comment.body.slice(0, 45)}..."`,
-          'New Comment'
-        );
+        const existing = useRequestStore.getState().requests[comment.requestId];
+        addNotification({
+          type: 'info',
+          title: 'New Comment',
+          message: `${comment.author?.name || 'Staff'}: "${comment.body?.slice(0, 45) || ''}..."`,
+          requestId: comment.requestId,
+          reference: existing?.reference,
+        });
       }
     },
     onStatsUpdated: (event: EventEnvelope) => {

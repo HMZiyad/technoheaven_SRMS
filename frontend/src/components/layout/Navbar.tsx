@@ -13,6 +13,7 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { useSocket } from '../../hooks/useSocket';
 import { RoleBadge } from '../common/Badge';
+import { NotificationBell } from './NotificationBell';
 import { Role } from '../../types';
 import { cn } from '../../utils/cn';
 
@@ -119,6 +120,8 @@ export const Navbar: React.FC = () => {
 
             {user ? (
               <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+                <NotificationBell />
+
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-semibold text-xs">
                     {user.name.charAt(0).toUpperCase()}
@@ -163,6 +166,7 @@ export const Navbar: React.FC = () => {
 
           {/* Mobile menu button */}
           <div className="flex items-center gap-2 md:hidden">
+            {user && <NotificationBell />}
             {user && getConnectionPill()}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
