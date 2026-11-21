@@ -6,6 +6,16 @@ A production-grade, full-stack **Real-Time Service Request Management System** d
 
 ---
 
+## 📚 Pre-Implementation Planning & Design Documentation
+
+The foundational architecture, security specifications, and project roadmap established prior to implementation:
+- 📋 **[Project Planning](docs/project_planning.md)** — Core business requirements, system capabilities, technology justifications, and phased task roadmap.
+- 🏗️ **[System Architecture](docs/system_architecture.md)** — End-to-end component topology, data flows, state machine lifecycle, and non-blocking worker pipeline design.
+- 🛡️ **[Security Planning](docs/security_planning.md)** — Threat modeling (STRIDE), cryptographic token revocation, RBAC policies, and defense-in-depth controls.
+- 📐 **[System Analysis](docs/01-system-analysis.md)** & **[System Design](docs/02-system-design.md)** — Architectural decisions, entity relationships, and protocol specifications.
+
+---
+
 ## 1. System Architecture
 
 ```mermaid
@@ -203,11 +213,13 @@ technoheaven_SRMS/
 ├── docker-compose.prod.yml         # Production multi-replica deployment with Nginx
 ├── Makefile                        # Convenient development shortcuts
 ├── .env.example                    # Environment configuration template
-├── docs/                           # Architecture, security & analysis documentation
-│   ├── 01-system-analysis.md
-│   ├── 02-system-design.md
-│   ├── tasks.md
-│   ├── security_planning.md
+├── docs/                           # Planning, architecture & security specifications
+│   ├── project_planning.md         # Initial project planning & requirements
+│   ├── system_architecture.md      # System architecture & pipeline design
+│   ├── security_planning.md        # Security planning & threat model
+│   ├── 01-system-analysis.md       # Requirements analysis
+│   ├── 02-system-design.md         # System design specifications
+│   ├── tasks.md                    # Detailed task breakdown
 │   └── adr/                        # Architecture Decision Records
 ├── backend/
 │   ├── Dockerfile                  # Multi-stage container build (base, dev, build, prod)
