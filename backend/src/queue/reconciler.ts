@@ -123,6 +123,37 @@ export async function reconcile(): Promise<{ failedCount: number; enqueuedCount:
         logger.error({ err, requestId: req.id }, 'Error reconciling stuck SUBMITTED request');
       }
     }
+
+    // 3. Find requests stuck in QUEUED older than 1 minute where no job exists in BullMQ
+    const stuckQueued = await prisma.serviceRequest.findMany({
+      where: {
+        status: Status.QUEUED,
+        updatedAt: { lte: new Date(now - 60 * 1000) },
+      },
+    });
+
+    for (const req of stuckQueued) {
+      try {
+        const job = await queueProducer.queue.getJob(req.id);
+        const isActiveOrWaiting = job
+          ? (await job.isActive()) || (await job.isWaiting()) || (await job.isDelayed())
+          : false;
+
+        if (!isActiveOrWaiting) {
+          if (job) {
+            await job.remove().catch(() => {});
+          }
+          await queueProducer.enqueue(req.id, req.priority);
+          enqueuedCount++;
+          logger.info(
+            { requestId: req.id, priority: req.priority },
+            'Reconciler re-enqueued orphaned QUEUED request',
+          );
+        }
+      } catch (err) {
+        logger.error({ err, requestId: req.id }, 'Error reconciling orphaned QUEUED request');
+      }
+    }
   } catch (err) {
     logger.error({ err }, 'Error in reconciler sweep');
   }

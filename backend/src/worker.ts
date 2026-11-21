@@ -86,6 +86,11 @@ async function processJob(job: Job<ProcessJobData>): Promise<void> {
     );
     if (request.cancelRequested && request.status !== Status.CANCELLED) {
       await handleCancellation(requestId, request.createdById, request.status);
+      return;
+    }
+    if (request.status === Status.SUBMITTED) {
+      // If DB commit is still in-flight, throw so BullMQ retries with backoff instead of dropping the job
+      throw new Error(`Request ${requestId} is still in SUBMITTED state, retrying...`);
     }
     return;
   }

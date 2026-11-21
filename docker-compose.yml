@@ -60,6 +60,11 @@ services:
       redis:
         condition: service_healthy
     env_file: .env
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
+      - ./backend/scripts:/app/scripts
+      - /app/node_modules
     restart: unless-stopped
 
   migrate:
