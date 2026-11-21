@@ -67,10 +67,7 @@ export async function createRequest(
     return req;
   });
 
-  // Enqueue job to BullMQ
-  await queueProducer.enqueue(createdRequest.id, createdRequest.priority);
-
-  // Transition SUBMITTED -> QUEUED
+  // Transition SUBMITTED -> QUEUED in DB first
   const queuedRequest = await prisma.$transaction(async (tx) => {
     const qReq = await requestRepository.updateWithVersion(
       createdRequest.id,
@@ -90,6 +87,9 @@ export async function createRequest(
     );
     return qReq!;
   });
+
+  // Enqueue job to BullMQ after DB status is confirmed QUEUED
+  await queueProducer.enqueue(queuedRequest.id, queuedRequest.priority);
 
   // Publish event
   await eventPublisher.publishRequestCreated(queuedRequest);
