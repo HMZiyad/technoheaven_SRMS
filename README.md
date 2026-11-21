@@ -6,13 +6,13 @@ A production-grade, full-stack **Real-Time Service Request Management System** d
 
 ---
 
-## 📚 Pre-Implementation Planning & Design Documentation
+## Pre-Implementation Planning & Design Documentation
 
 The foundational architecture, security specifications, and project roadmap established prior to implementation:
-- 📋 **[Project Planning](docs/project_planning.md)** — Core business requirements, system capabilities, technology justifications, and phased task roadmap.
-- 🏗️ **[System Architecture](docs/system_architecture.md)** — End-to-end component topology, data flows, state machine lifecycle, and non-blocking worker pipeline design.
-- 🛡️ **[Security Planning](docs/security_planning.md)** — Threat modeling (STRIDE), cryptographic token revocation, RBAC policies, and defense-in-depth controls.
-- 📐 **[System Analysis](docs/01-system-analysis.md)** & **[System Design](docs/02-system-design.md)** — Architectural decisions, entity relationships, and protocol specifications.
+- **[Project Planning](docs/project_planning.md)** — Core business requirements, system capabilities, technology justifications, and phased task roadmap.
+-  **[System Architecture](docs/system_architecture.md)** — End-to-end component topology, data flows, state machine lifecycle, and non-blocking worker pipeline design.
+-  **[Security Planning](docs/security_planning.md)** — Threat modeling (STRIDE), cryptographic token revocation, RBAC policies, and defense-in-depth controls.
+- **[System Analysis](docs/01-system-analysis.md)** & **[System Design](docs/02-system-design.md)** — Architectural decisions, entity relationships, and protocol specifications.
 
 ---
 
