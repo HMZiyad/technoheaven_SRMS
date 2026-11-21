@@ -12,6 +12,8 @@ import { LoginPage } from './pages/LoginPage';
 import { OperatorDashboard } from './pages/OperatorDashboard';
 import { SupervisorDashboard } from './pages/SupervisorDashboard';
 import { RequestDetailPage } from './pages/RequestDetailPage';
+import { NewRequestPage } from './pages/NewRequestPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AlertCircle, Home } from 'lucide-react';
 
 const queryClient = new QueryClient({
@@ -223,8 +225,8 @@ export const App: React.FC = () => {
           >
             <Route index element={<DashboardDispatcher />} />
             <Route path="requests" element={<DashboardDispatcher />} />
-            <Route path="requests/new" element={<DashboardDispatcher />} />
-            <Route path="analytics" element={<SupervisorDashboard />} />
+            <Route path="requests/new" element={<NewRequestPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="requests/:id" element={<RequestDetailPage />} />
           </Route>
 

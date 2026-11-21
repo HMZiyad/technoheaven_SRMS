@@ -227,6 +227,8 @@ export async function countOpenByUser(
 export async function getStats(): Promise<{
   byStatus: Record<string, number>;
   byPriority: Record<string, number>;
+  byCategory: Record<string, number>;
+  topCustomers: { name: string; count: number }[];
   total: number;
   avgProcessingTimeMs: number;
 }> {
@@ -248,28 +250,47 @@ export async function getStats(): Promise<{
     [Priority.URGENT]: 0,
   };
 
-  const [total, statusGroups, priorityGroups, completedRequests] = await Promise.all([
-    prisma.serviceRequest.count(),
-    prisma.serviceRequest.groupBy({
-      by: ['status'],
-      _count: { id: true },
-    }),
-    prisma.serviceRequest.groupBy({
-      by: ['priority'],
-      _count: { id: true },
-    }),
-    prisma.serviceRequest.findMany({
-      where: {
-        status: Status.COMPLETED,
-        startedAt: { not: null },
-        completedAt: { not: null },
-      },
-      select: {
-        startedAt: true,
-        completedAt: true,
-      },
-    }),
-  ]);
+  const byCategory: Record<string, number> = {
+    [Category.TECHNICAL]: 0,
+    [Category.BILLING]: 0,
+    [Category.ACCOUNT]: 0,
+    [Category.GENERAL]: 0,
+    [Category.EMERGENCY]: 0,
+  };
+
+  const [total, statusGroups, priorityGroups, categoryGroups, customerGroups, completedRequests] =
+    await Promise.all([
+      prisma.serviceRequest.count(),
+      prisma.serviceRequest.groupBy({
+        by: ['status'],
+        _count: { id: true },
+      }),
+      prisma.serviceRequest.groupBy({
+        by: ['priority'],
+        _count: { id: true },
+      }),
+      prisma.serviceRequest.groupBy({
+        by: ['category'],
+        _count: { id: true },
+      }),
+      prisma.serviceRequest.groupBy({
+        by: ['customerName'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 10,
+      }),
+      prisma.serviceRequest.findMany({
+        where: {
+          status: Status.COMPLETED,
+          startedAt: { not: null },
+          completedAt: { not: null },
+        },
+        select: {
+          startedAt: true,
+          completedAt: true,
+        },
+      }),
+    ]);
 
   for (const group of statusGroups) {
     byStatus[group.status] = group._count.id;
@@ -278,6 +299,15 @@ export async function getStats(): Promise<{
   for (const group of priorityGroups) {
     byPriority[group.priority] = group._count.id;
   }
+
+  for (const group of categoryGroups) {
+    byCategory[group.category] = group._count.id;
+  }
+
+  const topCustomers = customerGroups.map((g) => ({
+    name: g.customerName,
+    count: g._count.id,
+  }));
 
   let avgProcessingTimeMs = 0;
   if (completedRequests.length > 0) {
@@ -292,6 +322,8 @@ export async function getStats(): Promise<{
   return {
     byStatus,
     byPriority,
+    byCategory,
+    topCustomers,
     total,
     avgProcessingTimeMs,
   };

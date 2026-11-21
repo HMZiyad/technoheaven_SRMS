@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Inbox,
   ArrowRight,
+  Plus,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useRequestStore } from '../store/requestStore';
@@ -220,6 +221,13 @@ export const SupervisorDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/requests/new"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-2xs transition active:scale-95"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>New Request</span>
+          </Link>
           <button
             onClick={fetchAllData}
             disabled={isLoading}

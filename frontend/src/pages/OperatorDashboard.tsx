@@ -189,13 +189,13 @@ export const OperatorDashboard: React.FC = () => {
             Submit, track, and manage your dispatched service requests in real time.
           </p>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
+        <Link
+          to="/requests/new"
           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold text-xs rounded-lg shadow-2xs transition active:scale-95"
         >
           <Plus className="h-4 w-4" />
           <span>New Service Request</span>
-        </button>
+        </Link>
       </div>
 
       {/* Main Section: Search, Filters & Table */}

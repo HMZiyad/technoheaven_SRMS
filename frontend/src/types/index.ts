@@ -119,6 +119,8 @@ export interface PaginationMeta {
 export interface StatsSummary {
   byStatus: Record<Status | string, number>;
   byPriority: Record<Priority | string, number>;
+  byCategory?: Record<Category | string, number>;
+  topCustomers?: { name: string; count: number }[];
   total: number;
   avgProcessingTimeMs: number;
 }

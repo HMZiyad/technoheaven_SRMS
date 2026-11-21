@@ -8,7 +8,6 @@ export const statsRouter = Router();
 statsRouter.get(
   ['/', '/stats'],
   authenticate,
-  requireRole(Role.SUPERVISOR, Role.ADMIN),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = (req as AuthRequest).user!;

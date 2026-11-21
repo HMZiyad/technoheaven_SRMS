@@ -29,16 +29,18 @@ export const Navbar: React.FC = () => {
     navigate('/login');
   };
 
-  const isSupervisorOrAdmin =
-    user?.role === Role.SUPERVISOR || user?.role === Role.ADMIN;
-
   const navLinks = [
     { label: 'Requests', path: '/requests', icon: ListFilter },
     { label: 'New Request', path: '/requests/new', icon: PlusCircle },
-    ...(isSupervisorOrAdmin
-      ? [{ label: 'Analytics', path: '/analytics', icon: BarChart3 }]
-      : []),
+    { label: 'Analytics', path: '/analytics', icon: BarChart3 },
   ];
+
+  const isLinkActive = (path: string) => {
+    if (path === '/requests') {
+      return location.pathname === '/' || location.pathname === '/requests';
+    }
+    return location.pathname === path;
+  };
 
   const getConnectionPill = () => {
     switch (socketStatus) {
@@ -92,7 +94,7 @@ export const Navbar: React.FC = () => {
               <nav className="hidden md:flex items-center gap-1">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive = location.pathname === link.path;
+                  const isActive = isLinkActive(link.path);
                   return (
                     <Link
                       key={link.path}
@@ -205,7 +207,7 @@ export const Navbar: React.FC = () => {
             <div className="space-y-1">
               {navLinks.map((link) => {
                 const Icon = link.icon;
-                const isActive = location.pathname === link.path;
+                const isActive = isLinkActive(link.path);
                 return (
                   <Link
                     key={link.path}
