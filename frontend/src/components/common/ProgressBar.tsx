@@ -37,7 +37,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       case Status.CANCELLED:
         return 'bg-slate-400';
       case Status.IN_PROGRESS:
-        return 'bg-indigo-600 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600';
+        return 'bg-indigo-600';
       case Status.QUEUED:
         return 'bg-amber-500';
       default:
@@ -50,22 +50,21 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       case 'sm':
         return 'h-1.5';
       case 'lg':
-        return 'h-3.5';
+        return 'h-3';
       case 'md':
       default:
-        return 'h-2.5';
+        return 'h-2';
     }
   };
 
   return (
-    <div className={cn('w-full flex flex-col gap-1.5', className)}>
+    <div className={cn('w-full flex flex-col gap-1', className)}>
       {/* Progress track */}
-      <div className={cn('w-full bg-slate-100 rounded-full overflow-hidden shadow-inner', getHeightClass())}>
+      <div className={cn('w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/50', getHeightClass())}>
         <div
           className={cn(
-            'h-full rounded-full transition-all duration-500 ease-out',
-            getBarColor(),
-            status === Status.IN_PROGRESS && 'animate-pulse'
+            'h-full rounded-full transition-all duration-300 ease-out',
+            getBarColor()
           )}
           style={{ width: `${clampedProgress}%` }}
         />

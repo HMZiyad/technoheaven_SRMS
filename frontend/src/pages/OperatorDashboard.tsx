@@ -180,54 +180,54 @@ export const OperatorDashboard: React.FC = () => {
   }, [requests, user, statusFilter, priorityFilter, categoryFilter, searchQuery]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Top Banner / Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-1">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Operator Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Operator Dashboard</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
             Submit, track, and manage your dispatched service requests in real time.
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm rounded-xl shadow-md shadow-primary-600/20 transition active:scale-98"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold text-xs rounded-lg shadow-2xs transition active:scale-95"
         >
           <Plus className="h-4 w-4" />
           <span>New Service Request</span>
         </button>
       </div>
 
-      {/* Main Section: Search & Filters */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
+      {/* Main Section: Search, Filters & Table */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="p-3 sm:px-4 bg-white border-b border-slate-200/80 flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between">
           {/* Search Box */}
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search reference, title, or customer..."
-              className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition"
+              className="w-full pl-9 pr-7 py-1.5 text-xs bg-slate-50/70 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
           {/* Dropdown Filters */}
-          <div className="flex flex-wrap gap-2 w-full md:w-auto items-center">
+          <div className="flex flex-wrap gap-2 items-center">
             {/* Status Filter */}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:bg-white focus:ring-2 focus:ring-primary-500"
+              className="text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:ring-1 focus:ring-primary-500 font-medium"
             >
               <option value="ALL">All Statuses</option>
               {Object.values(Status).map((s) => (
@@ -241,7 +241,7 @@ export const OperatorDashboard: React.FC = () => {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:bg-white focus:ring-2 focus:ring-primary-500"
+              className="text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:ring-1 focus:ring-primary-500 font-medium"
             >
               <option value="ALL">All Priorities</option>
               {Object.values(Priority).map((p) => (
@@ -255,7 +255,7 @@ export const OperatorDashboard: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:bg-white focus:ring-2 focus:ring-primary-500"
+              className="text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:ring-1 focus:ring-primary-500 font-medium"
             >
               <option value="ALL">All Categories</option>
               {Object.values(Category).map((c) => (
@@ -273,7 +273,7 @@ export const OperatorDashboard: React.FC = () => {
                   setCategoryFilter('ALL');
                   setSearchQuery('');
                 }}
-                className="text-xs text-primary-600 hover:text-primary-800 font-medium px-2 py-1.5"
+                className="text-xs text-primary-600 hover:text-primary-800 font-semibold px-2 py-1 transition"
               >
                 Reset
               </button>
@@ -282,18 +282,18 @@ export const OperatorDashboard: React.FC = () => {
         </div>
 
         {/* Table of Requests */}
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-            <thead className="bg-slate-50 text-slate-600 font-medium text-xs uppercase tracking-wider">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200/80 text-left text-xs">
+            <thead className="bg-slate-50/80 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3.5 px-4">Reference</th>
-                <th className="py-3.5 px-4">Title</th>
-                <th className="py-3.5 px-4">Customer</th>
-                <th className="py-3.5 px-4">Priority</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 min-w-[160px]">Progress</th>
-                <th className="py-3.5 px-4">Created At</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
+                <th className="py-2.5 px-3.5">Reference</th>
+                <th className="py-2.5 px-3.5">Title</th>
+                <th className="py-2.5 px-3.5">Customer</th>
+                <th className="py-2.5 px-3.5">Priority</th>
+                <th className="py-2.5 px-3.5">Status</th>
+                <th className="py-2.5 px-3.5 min-w-[170px]">Progress</th>
+                <th className="py-2.5 px-3.5">Created At</th>
+                <th className="py-2.5 px-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -301,49 +301,32 @@ export const OperatorDashboard: React.FC = () => {
                 // Skeleton loading state
                 Array.from({ length: 4 }).map((_, idx) => (
                   <tr key={idx} className="animate-pulse">
-                    <td className="py-4 px-4">
-                      <div className="h-4 bg-slate-200 rounded w-20" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-4 bg-slate-200 rounded w-44 mb-1" />
-                      <div className="h-3 bg-slate-100 rounded w-24" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-4 bg-slate-200 rounded w-28" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-5 bg-slate-200 rounded w-16" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-5 bg-slate-200 rounded w-20" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-2 bg-slate-200 rounded-full w-full" />
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="h-4 bg-slate-200 rounded w-24" />
-                    </td>
-                    <td className="py-4 px-4 text-right">
-                      <div className="h-7 bg-slate-200 rounded w-16 ml-auto" />
-                    </td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-16" /></td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-44 mb-1" /><div className="h-3 bg-slate-50 rounded w-24" /></td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-28" /></td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-14" /></td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-20" /></td>
+                    <td className="py-3 px-3.5"><div className="h-2 bg-slate-100 rounded-full w-full" /></td>
+                    <td className="py-3 px-3.5"><div className="h-4 bg-slate-100 rounded w-24" /></td>
+                    <td className="py-3 px-3.5 text-right"><div className="h-6 bg-slate-100 rounded w-14 ml-auto" /></td>
                   </tr>
                 ))
               ) : filteredRequests.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
-                        <Inbox className="h-6 w-6" />
+                      <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2">
+                        <Inbox className="h-5 w-5" />
                       </div>
-                      <p className="text-base font-semibold text-slate-700">No service requests yet</p>
-                      <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                      <p className="text-sm font-semibold text-slate-700">No service requests yet</p>
+                      <p className="text-xs text-slate-400 mt-0.5 max-w-sm">
                         {searchQuery || statusFilter !== 'ALL'
                           ? 'No requests match your current filters. Try clearing search criteria.'
                           : 'Get started by creating your first service request.'}
                       </p>
                       <button
                         onClick={() => setShowCreateModal(true)}
-                        className="mt-4 px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-xs font-semibold"
+                        className="mt-3.5 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-xs font-semibold shadow-2xs transition"
                       >
                         Create Request
                       </button>
@@ -360,56 +343,56 @@ export const OperatorDashboard: React.FC = () => {
                   return (
                     <tr
                       key={req.id}
-                      className="hover:bg-slate-50/80 transition-colors group"
+                      className="hover:bg-slate-50/70 transition-colors group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-medium text-primary-600">
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
                         <Link
                           to={`/requests/${req.id}`}
-                          className="hover:underline flex items-center gap-1"
+                          className="font-mono font-semibold text-slate-800 hover:text-primary-600 bg-slate-100 hover:bg-primary-50 px-2 py-0.5 rounded border border-slate-200/80 hover:border-primary-200 inline-flex items-center gap-1 transition"
                         >
                           {req.reference}
-                          <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition" />
+                          <ExternalLink className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition text-primary-500" />
                         </Link>
                       </td>
-                      <td className="py-3.5 px-4 max-w-xs">
-                        <div className="font-medium text-slate-900 truncate" title={req.title}>
+                      <td className="py-2.5 px-3.5 max-w-xs">
+                        <div className="font-semibold text-slate-900 truncate" title={req.title}>
                           {req.title}
                         </div>
-                        <div className="text-xs text-slate-400 capitalize">{req.category.toLowerCase()}</div>
+                        <div className="text-[11px] text-slate-500 capitalize mt-0.5">{req.category.toLowerCase()}</div>
                       </td>
-                      <td className="py-3.5 px-4">
-                        <div className="font-medium text-slate-800">{req.customerName}</div>
-                        <div className="text-xs text-slate-400">{req.customerContact}</div>
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
+                        <div className="font-semibold text-slate-800">{req.customerName}</div>
+                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">{req.customerContact}</div>
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
                         <PriorityBadge priority={req.priority} />
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
                         <StatusBadge status={req.status} />
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-2.5 px-3.5 min-w-[170px]">
                         <div className="flex flex-col gap-1">
-                          <div className="flex justify-between text-[11px] text-slate-500 font-medium">
-                            <span>{req.currentStage || 'Pending'}</span>
-                            <span>{req.progress}%</span>
+                          <div className="flex justify-between text-[11px] font-medium text-slate-600">
+                            <span>Stage: <strong className="text-slate-900">{req.currentStage || 'Pending'}</strong></span>
+                            <span className="font-mono text-slate-700 font-semibold">{req.progress}%</span>
                           </div>
                           <ProgressBar progress={req.progress} status={req.status} size="sm" />
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-500 whitespace-nowrap">
+                      <td className="py-2.5 px-3.5 text-xs text-slate-500 whitespace-nowrap font-mono">
                         {new Date(req.createdAt).toLocaleDateString()} {new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
-                      <td className="py-3.5 px-4 text-right space-x-2 whitespace-nowrap">
+                      <td className="py-2.5 px-3.5 text-right space-x-1.5 whitespace-nowrap">
                         <Link
                           to={`/requests/${req.id}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md transition shadow-2xs"
                         >
                           View
                         </Link>
                         {canCancel && (
                           <button
                             onClick={() => setCancelTarget(req)}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-lg transition"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-1 rounded-md transition"
                           >
                             Cancel
                           </button>
@@ -422,25 +405,33 @@ export const OperatorDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Table footer count */}
+        <div className="px-4 py-2.5 bg-slate-50/60 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+          <span>
+            Showing <strong className="text-slate-800">{filteredRequests.length}</strong> service requests
+          </span>
+          <span className="text-[11px] text-slate-400">Real-time updates enabled</span>
+        </div>
       </div>
 
       {/* New Service Request Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50">
-              <h3 className="font-bold text-slate-900 text-lg">Create New Service Request</h3>
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex justify-between items-center px-5 py-3.5 border-b border-slate-200/80 bg-slate-50/80">
+              <h3 className="font-bold text-slate-900 text-sm">Create Service Request</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/50 transition"
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-200/50 transition"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleCreateSubmit} className="p-5 space-y-3.5">
               {formError && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2">
+                <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600" />
                   <span>{formError}</span>
                 </div>
@@ -456,7 +447,7 @@ export const OperatorDashboard: React.FC = () => {
                   placeholder="e.g. Database connectivity timeout in region eu-west"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
 
@@ -470,17 +461,17 @@ export const OperatorDashboard: React.FC = () => {
                   placeholder="Provide comprehensive details regarding the issue or work required..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as Category)}
-                    className="w-full text-sm px-3.5 py-2 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500"
+                    className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500"
                   >
                     {Object.values(Category).map((cat) => (
                       <option key={cat} value={cat}>
@@ -495,7 +486,7 @@ export const OperatorDashboard: React.FC = () => {
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as Priority)}
-                    className="w-full text-sm px-3.5 py-2 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500"
+                    className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500"
                   >
                     {Object.values(Priority).map((pri) => (
                       <option key={pri} value={pri}>
@@ -506,7 +497,7 @@ export const OperatorDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Customer Name <span className="text-rose-500">*</span>
@@ -517,7 +508,7 @@ export const OperatorDashboard: React.FC = () => {
                     placeholder="e.g. John Doe or Acme Corp"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
 
@@ -531,32 +522,32 @@ export const OperatorDashboard: React.FC = () => {
                     placeholder="e.g. customer@acme.com or +1-555-0199"
                     value={customerContact}
                     onChange={(e) => setCustomerContact(e.target.value)}
-                    className="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
+              <div className="pt-3 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800 rounded-xl hover:bg-slate-100 transition"
+                  className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-md transition disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-2xs transition disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       <span>Creating...</span>
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4" />
+                      <Send className="h-3.5 w-3.5" />
                       <span>Submit Request</span>
                     </>
                   )}

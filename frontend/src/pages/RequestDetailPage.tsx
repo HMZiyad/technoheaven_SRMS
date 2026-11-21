@@ -231,29 +231,29 @@ export const RequestDetailPage: React.FC = () => {
   const canRetry = isSupervisorOrAdmin && request.status === Status.FAILED;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-4 max-w-5xl mx-auto">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3.5 py-2 rounded-xl shadow-xs transition hover:bg-slate-50"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs transition hover:bg-slate-50"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           <span>Back to Dashboard</span>
         </button>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {canRetry && (
             <button
               onClick={handleRetry}
               disabled={isRetrying}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-md transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg shadow-2xs transition disabled:opacity-50"
             >
               {isRetrying ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <RotateCw className="h-4 w-4" />
+                <RotateCw className="h-3.5 w-3.5" />
               )}
               <span>Retry Request</span>
             </button>
@@ -263,9 +263,9 @@ export const RequestDetailPage: React.FC = () => {
             <button
               onClick={() => setShowCancelModal(true)}
               disabled={isCancelling}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-md transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg shadow-2xs transition disabled:opacity-50"
             >
-              <AlertTriangle className="h-4 w-4" />
+              <AlertTriangle className="h-3.5 w-3.5" />
               <span>Cancel Request</span>
             </button>
           )}
@@ -273,44 +273,44 @@ export const RequestDetailPage: React.FC = () => {
       </div>
 
       {/* Main Request Header Card */}
-      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-6">
+      <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200/80 pb-4">
           <div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="font-mono text-xl font-bold text-primary-600 bg-primary-50 px-3 py-1 rounded-lg border border-primary-200">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="font-mono text-sm font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200/80">
                 {request.reference}
               </span>
               <StatusBadge status={request.status} />
               <PriorityBadge priority={request.priority} />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 mt-3">{request.title}</h1>
-            <p className="text-xs text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-              <span>Category: <strong className="text-slate-600 capitalize">{request.category.toLowerCase()}</strong></span>
-              <span>•</span>
+            <h1 className="text-xl font-bold text-slate-900 mt-2">{request.title}</h1>
+            <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+              <span>Category: <strong className="text-slate-700 capitalize">{request.category.toLowerCase()}</strong></span>
+              <span className="text-slate-300">•</span>
               <span>Created: {new Date(request.createdAt).toLocaleString()}</span>
               {request.createdBy?.name && (
                 <>
-                  <span>•</span>
-                  <span>Created By: <strong className="text-slate-600">{request.createdBy.name}</strong></span>
+                  <span className="text-slate-300">•</span>
+                  <span>Created By: <strong className="text-slate-700">{request.createdBy.name}</strong></span>
                 </>
               )}
             </p>
           </div>
         </div>
 
-        {/* Large Animated Progress Bar & Current Stage */}
-        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+        {/* Large Progress Bar & Current Stage */}
+        <div className="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80 space-y-3">
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                 Pipeline Stage
               </span>
-              <h3 className="text-lg font-bold text-slate-900 mt-0.5">
+              <h3 className="text-base font-bold text-slate-900 mt-0.5">
                 {request.currentStage || (request.status === Status.COMPLETED ? 'Finalize' : 'Awaiting Stage')}
               </h3>
             </div>
             <div className="text-right">
-              <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              <span className="text-2xl font-extrabold text-slate-900 tracking-tight font-mono">
                 {request.progress}%
               </span>
             </div>
@@ -321,11 +321,11 @@ export const RequestDetailPage: React.FC = () => {
             status={request.status}
             currentStage={request.currentStage}
             showStages={true}
-            size="lg"
+            size="md"
           />
 
           {request.failureReason && (
-            <div className="mt-3 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2.5">
+            <div className="mt-2.5 p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700 flex items-start gap-2">
               <AlertOctagon className="h-4 w-4 shrink-0 text-rose-600 mt-0.5" />
               <div>
                 <strong>Failure Reason:</strong> {request.failureReason}
@@ -335,30 +335,30 @@ export const RequestDetailPage: React.FC = () => {
         </div>
 
         {/* Description & Customer Information Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
           {/* Left: Description */}
-          <div className="md:col-span-2 space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="md:col-span-2 space-y-1.5">
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Description
             </h4>
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+            <div className="p-3.5 bg-slate-50/70 rounded-lg border border-slate-200/80 text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">
               {request.description}
             </div>
           </div>
 
           {/* Right: Customer Card */}
-          <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="space-y-1.5">
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Customer Details
             </h4>
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-3 text-sm">
+            <div className="p-3.5 bg-slate-50/70 rounded-lg border border-slate-200/80 space-y-2 text-xs">
               <div className="flex items-center gap-2 text-slate-800">
-                <User className="h-4 w-4 text-slate-400 shrink-0" />
+                <User className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                 <span className="font-semibold">{request.customerName}</span>
               </div>
               <div className="flex items-center gap-2 text-slate-600 text-xs">
-                <Mail className="h-4 w-4 text-slate-400 shrink-0" />
-                <span className="truncate">{request.customerContact}</span>
+                <Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                <span className="truncate font-mono">{request.customerContact}</span>
               </div>
             </div>
           </div>
@@ -366,22 +366,22 @@ export const RequestDetailPage: React.FC = () => {
       </div>
 
       {/* Grid: Status History Timeline & Comments Thread */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Status History Timeline */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-            <HistoryIcon className="h-5 w-5 text-primary-600" />
-            <h3 className="font-bold text-slate-900 text-base">Status History Timeline</h3>
+            <HistoryIcon className="h-4 w-4 text-primary-600" />
+            <h3 className="font-bold text-slate-900 text-sm">Status History Timeline</h3>
           </div>
 
           {history.length === 0 ? (
             <p className="text-xs text-slate-400 py-6 text-center">No status changes recorded yet.</p>
           ) : (
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+            <div className="relative pl-5 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
               {history.map((step, idx) => (
                 <div key={step.id || idx} className="relative group">
-                  <div className="absolute -left-[27px] top-1 h-3.5 w-3.5 rounded-full bg-primary-600 border-2 border-white ring-4 ring-primary-100" />
-                  <div className="space-y-1">
+                  <div className="absolute -left-[23px] top-1 h-3 w-3 rounded-full bg-primary-600 border-2 border-white ring-2 ring-primary-100" />
+                  <div className="space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap text-xs">
                       {step.fromStatus ? (
                         <>
@@ -392,7 +392,7 @@ export const RequestDetailPage: React.FC = () => {
                       <span className="font-bold text-slate-900">{step.toStatus}</span>
                     </div>
 
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-[11px] text-slate-400 font-mono">
                       {new Date(step.createdAt).toLocaleString()}
                       {step.changedBy?.name && (
                         <span> • by <strong>{step.changedBy.name}</strong></span>
@@ -400,7 +400,7 @@ export const RequestDetailPage: React.FC = () => {
                     </div>
 
                     {step.note && (
-                      <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-1">
+                      <p className="text-xs text-slate-600 bg-slate-50 p-2 rounded-md border border-slate-100 mt-1">
                         {step.note}
                       </p>
                     )}
@@ -412,29 +412,29 @@ export const RequestDetailPage: React.FC = () => {
         </div>
 
         {/* Comments Thread */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5 flex flex-col justify-between">
-          <div className="space-y-4">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <MessageSquare className="h-5 w-5 text-primary-600" />
-              <h3 className="font-bold text-slate-900 text-base">Comments & Audit Discussion</h3>
+              <MessageSquare className="h-4 w-4 text-primary-600" />
+              <h3 className="font-bold text-slate-900 text-sm">Comments & Activity</h3>
             </div>
 
-            <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+            <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
               {comments.length === 0 ? (
-                <p className="text-xs text-slate-400 py-8 text-center">
+                <p className="text-xs text-slate-400 py-6 text-center">
                   No comments yet. Start the conversation below.
                 </p>
               ) : (
                 comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5"
+                    className="p-3 bg-slate-50/70 rounded-lg border border-slate-200/80 space-y-1"
                   >
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-semibold text-slate-800">
                         {comment.author?.name || 'Staff Member'}
                       </span>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-[10px] text-slate-400 font-mono">
                         {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
@@ -446,7 +446,7 @@ export const RequestDetailPage: React.FC = () => {
           </div>
 
           {/* Add Comment Form */}
-          <form onSubmit={handleAddComment} className="pt-4 border-t border-slate-100 space-y-2">
+          <form onSubmit={handleAddComment} className="pt-3 border-t border-slate-100 space-y-2">
             <textarea
               rows={2}
               required
